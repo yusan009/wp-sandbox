@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ---------- wordpress セットアップスタート ------------ #
-wp core install --url='http://localhost:8000' --title='wp-sandbox' --admin_user='sandbox' --admin_password='sandbox' --admin_email='wp@example.com'
+wp core install --url='http://localhost:8000' --title='wp-sandbox' --admin_user='wp-sandbox' --admin_password='wp-sandbox' --admin_email='wp@example.com'
 
 wp language core install ja --activate
 
