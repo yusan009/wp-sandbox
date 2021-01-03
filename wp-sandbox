@@ -1,0 +1,56 @@
+#!/bin/bash
+
+ACTION=$1
+
+function setup() {
+    echo 'setup wp-sandbox'
+
+    # dockerに渡す環境変数を生成
+    # 現ユーザのuidをdockerに渡す
+    uid=`id -u`
+    echo WP_SANDBOX_UID=${uid} > ./wp-sandbox.env
+
+    docker-compose up -d
+    # wpコマンドが実行できないので、コンテナのapacheが起動するまで待つ
+    until [ `docker exec wps-app /bin/bash -c 'pgrep -l apache | wc -l'` -ne '0' ]
+    do
+        echo -n .
+        sleep 1
+    done
+    echo 'Start Apache2'
+
+    docker exec wps-app /bin/bash -c 'su wp-sandbox "/tmp/setup_wordpress.sh"'
+}
+
+function start() {
+    echo 'start wp-sandbox'
+    docker-compose up -d
+}
+
+function stop() {
+    echo 'stop wp-sandbox'
+    docker-compose down
+}
+
+function status() {
+    echo 'status'
+    #until docker exec wps-web /bin/bash -c 'pgrep -lf apache | wc -l' &> /dev/null
+}
+
+case "$ACTION" in
+    "setup")
+        setup
+        ;;
+    "start")
+        start
+        ;;
+    "stop")
+        stop
+        ;;
+    "status")
+        status
+        ;;
+    *)
+        echo "action not found"
+        ;;
+esac
